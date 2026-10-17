@@ -14,12 +14,29 @@ export type StratusSession = Pick<Session, 'access_token' | 'refresh_token'> & {
 
 function getClient() {
   if (client) return client;
-  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-  if (!url || !key) {
-    throw new Error('Secure sign-in is not connected yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to the app environment, then try again.');
+  const configuredUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  const key = (
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+    || import.meta.env.VITE_SUPABASE_ANON_KEY
+  ) as string | undefined;
+  if (!configuredUrl || !key) {
+    throw new Error('Secure sign-in is not connected yet. Add VITE_SUPABASE_URL and a Supabase publishable key to the app environment, then try again.');
   }
-  client = createClient(url, key, {
+
+  let projectUrl: URL;
+  try {
+    projectUrl = new URL(configuredUrl.trim());
+  } catch {
+    throw new Error('The Supabase project URL is invalid. Set VITE_SUPABASE_URL to the project URL, not an API endpoint.');
+  }
+  if (!['https:', 'http:'].includes(projectUrl.protocol) || !projectUrl.hostname) {
+    throw new Error('The Supabase project URL must be an HTTP or HTTPS project URL.');
+  }
+
+  // Supabase JS adds /auth/v1 itself. Passing an API path such as /rest/v1 here
+  // causes the SDK to construct an invalid nested request path.
+  const baseUrl = projectUrl.origin;
+  client = createClient(baseUrl, key, {
     auth: {
       autoRefreshToken: true,
       detectSessionInUrl: true,
@@ -46,7 +63,8 @@ function toStratusSession(session: Session, user: User = session.user): StratusS
 }
 
 export async function signUp(email: string, password: string, fullName: string) {
-  const { data, error } = await getClient().auth.signUp({
+  const supabase = getClient();
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { full_name: fullName } },
