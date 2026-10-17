@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Stratus Bank"
+description = "A polished, responsive banking web app with a professional landing page, secure account access, and a customer dashboard for fictional sample account activity."
+version = "1.0.0"
+id = "artifacts/stratus-bank"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24396
+
+[services.development]
+run = "pnpm --filter @workspace/stratus-bank run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stratus-bank", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/stratus-bank/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24396"
+BASE_PATH = "/"
