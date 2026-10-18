@@ -11,7 +11,7 @@ export default function AuthLayout({ children, eyebrow, title, copy }: {
   return (
     <main className="auth-shell">
       <aside className="auth-side">
-        <Link href="/" aria-label="Stratus home"><Brand light /></Link>
+        <Link href="/welcome" aria-label="Stratus home"><Brand light /></Link>
         <div className="side-copy">
           <span className="eyebrow"><span className="eyebrow-dot" />{eyebrow}</span>
           <h2>{title}</h2>
@@ -21,8 +21,8 @@ export default function AuthLayout({ children, eyebrow, title, copy }: {
       </aside>
       <section className="auth-main">
         <div className="auth-main-inner">
-          <Link href="/" className="mobile-brand" aria-label="Stratus home"><Brand /></Link>
-          <Link href="/" className="auth-back"><ArrowLeft size={14} /> Back to home</Link>
+          <Link href="/welcome" className="mobile-brand" aria-label="Stratus home"><Brand /></Link>
+          <Link href="/welcome" className="auth-back"><ArrowLeft size={14} /> Back to home</Link>
           {children}
         </div>
       </section>

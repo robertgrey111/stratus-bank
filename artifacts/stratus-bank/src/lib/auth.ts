@@ -11,6 +11,14 @@ export type StratusUser = {
 export type StratusSession = Pick<Session, 'access_token' | 'refresh_token'> & {
   user: StratusUser;
 };
+export type MfaAccessState =
+  | { status: 'signed-out' }
+  | { status: 'setup' | 'challenge' | 'authenticated'; session: StratusSession };
+export type TotpEnrollment = {
+  factorId: string;
+  qrCode: string;
+  secret: string;
+};
 
 function getClient() {
   if (client) return client;
@@ -91,24 +99,105 @@ export async function resendSignupCode(email: string) {
   if (error) throw error;
 }
 
-export async function signIn(email: string, password: string) {
+export async function signIn(email: string, password: string): Promise<MfaAccessState> {
   const { data, error } = await getClient().auth.signInWithPassword({ email, password });
   if (error) throw error;
   if (!data.session) throw new Error('Your sign-in could not be completed. Check your details and try again.');
-  return toStratusSession(data.session, data.user);
+  return getMfaAccessState();
 }
 
-export async function getCurrentUser() {
+export async function getMfaAccessState(): Promise<MfaAccessState> {
   const supabase = getClient();
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   if (sessionError) throw sessionError;
-  if (!sessionData.session) return null;
+  if (!sessionData.session) return { status: 'signed-out' };
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     await supabase.auth.signOut({ scope: 'local' });
-    return null;
+    return { status: 'signed-out' };
   }
-  return toStratusSession(sessionData.session, userData.user);
+
+  const [{ data: assurance, error: assuranceError }, { data: factors, error: factorsError }] = await Promise.all([
+    supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+    supabase.auth.mfa.listFactors(),
+  ]);
+  if (assuranceError) throw assuranceError;
+  if (factorsError) throw factorsError;
+
+  const session = toStratusSession(sessionData.session, userData.user);
+  if (assurance.currentLevel === 'aal2' && assurance.nextLevel === 'aal2') {
+    return { status: 'authenticated', session };
+  }
+  if (factors.totp.some(factor => factor.status === 'verified')) {
+    return { status: 'challenge', session };
+  }
+  return { status: 'setup', session };
+}
+
+export async function beginTotpEnrollment(): Promise<TotpEnrollment> {
+  const state = await getMfaAccessState();
+  if (state.status === 'signed-out') {
+    throw new Error('Sign in before setting up an authenticator.');
+  }
+  if (state.status === 'authenticated') {
+    throw new Error('Your authenticator is already verified.');
+  }
+  if (state.status === 'challenge') {
+    throw new Error('This account already has an authenticator. Enter its current code to continue.');
+  }
+
+  const { data, error } = await getClient().auth.mfa.enroll({
+    factorType: 'totp',
+    friendlyName: 'Stratus Bank authenticator',
+  });
+  if (error) throw error;
+  return {
+    factorId: data.id,
+    qrCode: data.totp.qr_code,
+    secret: data.totp.secret,
+  };
+}
+
+async function challengeAndVerifyTotp(factorId: string, code: string) {
+  const supabase = getClient();
+  const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
+  if (challengeError) throw challengeError;
+
+  const { error: verifyError } = await supabase.auth.mfa.verify({
+    factorId,
+    challengeId: challenge.id,
+    code,
+  });
+  if (verifyError) throw verifyError;
+
+  const state = await getMfaAccessState();
+  if (state.status !== 'authenticated') {
+    throw new Error('The authenticator code was accepted, but your session did not reach the required security level. Please sign in again.');
+  }
+}
+
+export async function verifyTotpEnrollment(factorId: string, code: string) {
+  await challengeAndVerifyTotp(factorId, code);
+}
+
+export async function verifyTotpSignIn(code: string) {
+  const state = await getMfaAccessState();
+  if (state.status === 'signed-out') {
+    throw new Error('Your sign-in session has expired. Please sign in again.');
+  }
+  if (state.status === 'authenticated') return;
+  if (state.status !== 'challenge') {
+    throw new Error('Set up an authenticator before verifying a sign-in code.');
+  }
+
+  const supabase = getClient();
+  const { data: factors, error } = await supabase.auth.mfa.listFactors();
+  if (error) throw error;
+  const factor = factors.totp.find(item => item.status === 'verified');
+  if (!factor) {
+    throw new Error('No verified authenticator was found for this account. Set one up to continue.');
+  }
+  await challengeAndVerifyTotp(factor.id, code);
 }
 
 export function getPendingEmail() {

@@ -38,7 +38,7 @@ export default function VerifyEmail() {
     const token = digits.join('');
     if (token.length !== 6) { setError('Enter the six-digit code from your email.'); return; }
     setLoading(true);
-    try { await verifyEmail(email, token); setSuccess('Email verified. Opening your account…'); setTimeout(()=>setLocation('/dashboard'),650); }
+    try { await verifyEmail(email, token); setSuccess('Email verified. Preparing secure sign-in…'); setTimeout(()=>setLocation('/mfa-setup'),650); }
     catch (err) { setError(err instanceof Error ? err.message : 'That code could not be verified. Check it and try again.'); }
     finally { setLoading(false); }
   }

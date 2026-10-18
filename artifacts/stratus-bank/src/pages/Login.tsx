@@ -18,7 +18,13 @@ export default function Login() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setFieldError('Enter a valid email address.'); return; }
     if (!password) { setFieldError('Enter your password.'); return; }
     setLoading(true);
-    try { await signIn(email.trim(), password); setLocation('/dashboard'); }
+    try {
+      const access = await signIn(email.trim(), password);
+      if (access.status === 'authenticated') setLocation('/dashboard');
+      else if (access.status === 'challenge') setLocation('/mfa-challenge');
+      else if (access.status === 'setup') setLocation('/mfa-setup');
+      else setLocation('/login');
+    }
     catch (err) { setError(err instanceof Error ? err.message : 'We could not sign you in. Please try again.'); }
     finally { setLoading(false); }
   }

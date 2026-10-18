@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="site-shell">
       <header className="topbar">
-        <Link href="/" aria-label="Stratus home"><Brand /></Link>
+        <Link href="/welcome" aria-label="Stratus home"><Brand /></Link>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#how-it-feels">A better way</a><a href="#built-around-you">Your money, simply</a><a href="#security">Security</a>
         </nav>

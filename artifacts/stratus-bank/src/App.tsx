@@ -14,6 +14,8 @@ import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import VerifyEmail from '@/pages/VerifyEmail';
+import MfaSetup from '@/pages/MfaSetup';
+import MfaChallenge from '@/pages/MfaChallenge';
 import Dashboard from '@/pages/Dashboard';
 
 const queryClient = new QueryClient();
@@ -24,10 +26,13 @@ function Router() {
     // survives a page crash.
     <RoutedErrorBoundary>
       <Switch>
-        <Route path="/" component={Home} />
+        <Route path="/" component={Login} />
         <Route path="/login" component={Login} />
+        <Route path="/welcome" component={Home} />
         <Route path="/signup" component={Signup} />
         <Route path="/verify-email" component={VerifyEmail} />
+        <Route path="/mfa-setup" component={MfaSetup} />
+        <Route path="/mfa-challenge" component={MfaChallenge} />
         <Route path="/dashboard" component={Dashboard} />
         <Route component={NotFound} />
       </Switch>

@@ -24,7 +24,7 @@ export default function Signup() {
     setLoading(true);
     try {
       const result = await signUp(email.trim(), password, name.trim());
-      setLocation(result.requiresOtp ? '/verify-email' : '/dashboard');
+      setLocation(result.requiresOtp ? '/verify-email' : '/mfa-setup');
     }
     catch (err) { setError(err instanceof Error ? err.message : 'We could not create your account. Please try again.'); }
     finally { setLoading(false); }

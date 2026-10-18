@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowDownLeft, LockKeyhole, LogOut, ShieldCheck, ShoppingBag, Utensils } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import Brand from '../components/Brand';
-import { getCurrentUser, signOut, type StratusSession } from '../lib/auth';
+import { getMfaAccessState, signOut, type StratusSession } from '../lib/auth';
 
 const activity = [
   { name: 'Northstar Market', date: 'Today · 10:42 AM', amount: '-$48.26', kind: 'spend', icon: ShoppingBag },
@@ -17,7 +17,13 @@ export default function Dashboard() {
   const [signOutError, setSignOutError] = useState('');
   useEffect(() => {
     let live = true;
-    getCurrentUser().then(value => { if (!live) return; if (!value) setLocation('/login'); else setSession(value); })
+    getMfaAccessState().then(access => {
+      if (!live) return;
+      if (access.status === 'authenticated') setSession(access.session);
+      else if (access.status === 'challenge') setLocation('/mfa-challenge');
+      else if (access.status === 'setup') setLocation('/mfa-setup');
+      else setLocation('/login');
+    })
       .catch(() => { if (live) setLocation('/login'); })
       .finally(() => { if (live) setChecking(false); });
     return () => { live = false; };
@@ -26,7 +32,7 @@ export default function Dashboard() {
     setSignOutError('');
     try {
       await signOut();
-      setLocation('/');
+      setLocation('/login');
     } catch (error) {
       setSignOutError(error instanceof Error ? error.message : 'We could not sign you out. Please try again.');
     }
@@ -47,7 +53,7 @@ export default function Dashboard() {
           <div className="balance-label">Account balance</div><div className="balance-amount">$8,610.58</div><div className="balance-meta">Your everyday account</div>
           <div className="balance-foot"><span className="account-tag">•••• 4826</span><span className="secure-chip"><ShieldCheck size={13}/> Secure account</span></div>
         </section>
-        <section className="quick-card"><h2 className="quick-title">Everything in its place.</h2><p style={{fontSize:13,lineHeight:1.7,color:'#78889a',margin:'0 0 22px'}}>Your Stratus account is ready. We’ll keep your everyday balance and recent activity easy to find, right here.</p><div className="secure-chip" style={{color:'#4b7b61'}}><ShieldCheck size={14}/> Email verified and account secure</div></section>
+          <section className="quick-card"><h2 className="quick-title">Everything in its place.</h2><p style={{fontSize:13,lineHeight:1.7,color:'#78889a',margin:'0 0 22px'}}>Your Stratus account is ready. We’ll keep your everyday balance and recent activity easy to find, right here.</p><div className="secure-chip" style={{color:'#4b7b61'}}><ShieldCheck size={14}/> Authenticator verification enabled</div></section>
       </div>
       <section className="activity-card"><div className="activity-head"><h2 className="activity-title">Recent activity</h2><span className="activity-period">Most recent</span></div>
         {activity.map((item,index)=>{const Icon=item.icon;return <div className="activity-row" key={item.name} data-testid={`row-activity-${index}`}><div className="activity-left"><span className={`merchant-icon${item.kind==='income'?' income':''}`}><Icon size={17}/></span><span><span className="merchant-name">{item.name}</span><span className="merchant-date" style={{display:'block'}}>{item.date}</span></span></div><span className={`activity-amount${item.kind==='income'?' income':''}`}>{item.amount}</span></div>;})}
