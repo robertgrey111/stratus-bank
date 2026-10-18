@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: transfers
+    description: Transfer submission policy
 paths:
   /healthz:
     get:
@@ -24,6 +26,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /transfers:
+    post:
+      operationId: submitTransfer
+      tags: [transfers]
+      summary: Attempt a transfer
+      description: >
+        Transfer submissions are blocked until probate authorization. This endpoint
+        never creates a transfer or changes an account balance.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferAttempt"
+      responses:
+        "400":
+          description: Invalid transfer details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferRestriction"
+        "403":
+          description: Transfers are suspended pending probate authorization
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransferRestriction"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +62,42 @@ components:
           type: string
       required:
         - status
+    TransferAttempt:
+      type: object
+      required:
+        - recipientName
+        - accountIdentifier
+        - institution
+        - amount
+        - transferType
+        - reference
+      properties:
+        recipientName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        accountIdentifier:
+          type: string
+          minLength: 1
+          maxLength: 80
+        institution:
+          type: string
+          minLength: 1
+          maxLength: 120
+        amount:
+          type: number
+          exclusiveMinimum: 0
+        transferType:
+          type: string
+          enum: [domestic, international, internal]
+        reference:
+          type: string
+          maxLength: 140
+    TransferRestriction:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
 

@@ -1,0 +1,132 @@
+Update the existing Stratus Bank dashboard according to the following requirements. Inspect the existing code before making changes. Do not rebuild the application from scratch.
+
+IMPORTANT CURRENT STATUS: Email/password sign-in and six-digit Google Authenticator verification are already working successfully. The user can enter their credentials, provide the authenticator code, and reach the dashboard. Preserve this working authentication flow, the existing Supabase configuration, and the current authenticator factor. Do not recreate, remove, or disable MFA. Focus on improving the dashboard and its navigation.
+
+1. Account owner and personalized greeting
+
+The account owner’s name is Robert Grey. Display his name consistently throughout the account dashboard. Do not replace the account owner’s name with the name of another person who signs in.
+
+Make the greeting dynamic according to the local time of the device being used to access the dashboard.
+
+Examples:
+
+* Good morning, Robert Grey.
+* Good afternoon, Robert Grey.
+* Good evening, Robert Grey.
+
+Use the device’s local time zone to determine the greeting automatically. Do not display the physical location or claim to have verified the user’s location. The greeting should update appropriately as the local time changes.
+
+Below the greeting, display: “Here’s your account at a glance.”
+
+2. Account overview
+
+Create a professional account overview featuring:
+
+* Available balance: $30,618,147.00
+* Ledger balance: $30,618,147.00
+* Checking Account
+* Masked account number ending in 91180
+* Secure account status
+* A control to show or hide the displayed balance
+
+These are illustrative prototype values unless verified account records are connected. Keep sample data separate from actual financial records and do not represent fictional funds as real deposited money.
+
+Add two prominent, functional buttons:
+
+* Deposit
+* Transfer Funds
+
+3. Deposit page
+
+When Deposit is clicked, open a dedicated deposit page containing fields for the deposit amount, method, reference, and a review step.
+
+Do not claim a deposit has actually occurred without a genuine, authorized backend process. For prototype actions, use an appropriate pending or demonstration status.
+
+4. Transfer Funds page
+
+When Transfer Funds is clicked, open a dedicated transfer page with fields for the recipient’s name, account identifier, institution, transfer amount, transfer type, and reference.
+
+Allow the user to review the entered details before the final submission attempt.
+
+When the user attempts to submit the transfer, display this exact message:
+
+“Withdrawals and transfers are suspended pending probate authorization”
+
+Do not execute a transfer, deduct the account balance, or mark a transfer as completed. Enforce the restriction on the backend as well as in the interface. Preserve the form details if the user returns to edit them.
+
+5. Credit-only transaction history
+
+The Recent Transaction Activities section must contain CREDIT transactions only. Do not include debit transactions, outgoing payments, withdrawals, negative amounts, or negative balance adjustments.
+
+Use fictional company names and descriptions related to investment payments, investment distributions, business proceeds, contract receipts, and other incoming credits. Do not use other banks’ names or copy names from the reference screenshot.
+
+Use the following illustrative credit transactions:
+
+1. Summit Energy Group — Investment Payment — +$1,500,000.00
+2. Meridian Property Holdings — Real Estate Investment — +$1,250,000.00
+3. Northstar Capital Partners — Investment Return — +$1,100,000.00
+4. Evergreen Commercial Group — Contract Proceeds — +$1,000,000.00
+5. Sterling Infrastructure — Project Payment — +$900,000.00
+6. Horizon Asset Management — Investment Distribution — +$850,000.00
+7. Crestview Development — Property Proceeds — +$750,000.00
+8. Bluehaven Ventures — Investment Payment — +$768,147.00
+
+All transaction amounts must be $500,000 or higher.
+
+These are illustrative sample records, not verified real transactions. Label prototype data appropriately and do not invent financial activity for a real user’s account.
+
+For mathematical consistency, use an illustrative opening balance of $22,500,000.00. The eight listed credits total $8,118,147.00, producing a closing balance of $30,618,147.00.
+
+Display the company or counterparty name, transaction description, reference number, date and time, credit indicator, positive amount, and status. Include a View Details action for each record.
+
+Provide filters for All Credits, Completed, and Pending, plus a search field and a View All Transactions action. Do not add a debit filter or show debit records.
+
+6. Balance Flow
+
+Add a Balance Flow section below the transaction history. Display incoming credits over time using a clear chart with filters for 7 days, 30 days, 90 days, and All Time.
+
+The chart must reflect the illustrative credit-only dataset and must not show outgoing funds or fabricated verified financial history.
+
+7. Navigation menu
+
+Add a responsive navigation menu with:
+
+* Dashboard
+* Accounts
+* Deposit
+* Transfer Funds
+* Transactions
+* Statements
+* Cards
+* Beneficiaries
+* Profile and Settings
+* Security
+* Help and Support
+* Sign Out
+
+Use a sidebar on desktop and a compact navigation menu on mobile. Make implemented options functional. For features that are not yet available, show an honest unavailable or coming-soon message.
+
+8. Design
+
+Maintain the existing Stratus Bank branding while improving the dashboard with a premium, clean banking layout. Use consistent typography, balanced spacing, readable account cards, clear positive credit indicators, transaction status labels, and responsive layouts for desktop and mobile.
+
+Place the greeting at the top, account overview and Deposit/Transfer Funds buttons next, Recent Transaction Activities below, and Balance Flow further down.
+
+9. Security and testing
+
+Preserve the existing working email/password and authenticator sign-in flow. Reuse the existing Supabase setup and do not expose secret keys.
+
+Keep real account data protected by appropriate authentication and Row Level Security policies. Do not allow frontend code alone to control actual account balances or authorize financial operations.
+
+After making the changes:
+
+1. Verify that sign-in and six-digit authenticator verification still work.
+2. Verify that the greeting follows the device’s local time.
+3. Verify that the account owner remains Robert Grey.
+4. Verify that all displayed transaction records are credits and every amount is at least $500,000.
+5. Confirm that the opening balance plus the listed credits equals the closing balance.
+6. Confirm that transfer submission displays the exact probate authorization message and does not execute a transfer.
+7. Run the available build and TypeScript checks.
+8. Report the changes made and identify which features use illustrative data.
+
+Implement these changes in the existing project without breaking the working authentication system.
