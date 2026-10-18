@@ -1,0 +1,42 @@
+Update my current Stratus Bank website with the following exact user flow.
+
+1. Login page as the first screen
+
+* When someone opens the website, display the login page immediately.
+* Show the Stratus Bank branding, email address field, password field, and “Sign in securely” button.
+* Do not show the landing page or account registration form first.
+* Keep “New to Stratus? Open an account” as a secondary link for new users.
+* Keep my existing registered account and do not delete user data.
+
+2. Six-digit email verification
+
+* After a user enters the correct email and password, send a six-digit verification code to that registered email address.
+* Display the verification screen with a six-digit code input, a Verify button, and a Resend code option.
+* Require a valid, unexpired code before allowing access to the dashboard.
+* Do not display the dashboard if verification fails.
+* Use a secure implementation supported by my current Supabase project. Do not simulate verification or treat a frontend-only check as security.
+* If the current Supabase setup cannot securely support this flow, explain what is required before implementing an incomplete or insecure workaround.
+
+3. Dashboard
+
+* After successful verification, take the user directly to the existing Stratus Bank dashboard.
+* Preserve the current dashboard design and existing account features.
+* Ensure that refreshing the page or navigating directly to the dashboard cannot bypass verification.
+* Keep the user signed in appropriately after verification and provide a working sign-out option.
+
+4. Keep the project stable
+
+* Preserve the existing registration process.
+* Do not create another Replit or Supabase project.
+* Do not expose secret keys or place service-role keys in frontend code.
+* Keep the solution compatible with my free-tier setup wherever possible.
+* Run the typecheck and production build.
+* Test the login-to-code-to-dashboard flow and report anything I must configure manually in Supabase.
+
+Do not build the Transactions, Cards, or Profile pages yet. Complete this login and verification flow first.
+
+Error checking and troubleshooting requirements:
+
+During implementation, check for errors in the authentication flow, Supabase connection, email verification, routing, and dashboard access. Fix any issues you identify, run the typecheck and production build, and test the available workflows.
+
+If an issue requires manual configuration in Supabase or cannot be resolved automatically, explain the exact problem and give me simple, step-by-step instructions to fix it. Do not claim that a feature works unless it has actually been tested. Preserve the existing project and avoid unnecessary changes.
