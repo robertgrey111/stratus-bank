@@ -15,6 +15,7 @@ export default function MfaSetup() {
   const [enrollment, setEnrollment] = useState<TotpEnrollment | null>(null);
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(true);
+  const [starting, setStarting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -36,8 +37,6 @@ export default function MfaSetup() {
           setLocation('/mfa-challenge');
           return;
         }
-        const setup = await beginTotpEnrollment();
-        if (active) setEnrollment(setup);
       } catch (cause) {
         if (active) setError(cause instanceof Error ? cause.message : 'We could not start authenticator setup. Please try again.');
       } finally {
@@ -47,6 +46,19 @@ export default function MfaSetup() {
     void initialize();
     return () => { active = false; };
   }, [setLocation]);
+
+  async function startSetup() {
+    setError('');
+    setStarting(true);
+    try {
+      const setup = await beginTotpEnrollment();
+      setEnrollment(setup);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'We could not start authenticator setup. Please try again.');
+    } finally {
+      setStarting(false);
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -88,6 +100,16 @@ export default function MfaSetup() {
       <p className="auth-subtitle">Scan this QR code with Google Authenticator on your iPhone, then confirm with the six-digit code it generates.</p>
 
       {loading && (
+        <div className="mfa-loading" role="status">
+          <LoaderCircle size={18} className="animate-spin" /> Checking your account…
+        </div>
+      )}
+      {!loading && !enrollment && !error && (
+        <button className="button auth-submit" type="button" onClick={startSetup} disabled={starting}>
+          {starting ? <><LoaderCircle size={16} className="animate-spin" /> Preparing setup…</> : 'Set up authenticator'}
+        </button>
+      )}
+      {starting && !enrollment && (
         <div className="mfa-loading" role="status">
           <LoaderCircle size={18} className="animate-spin" /> Preparing your secure setup…
         </div>

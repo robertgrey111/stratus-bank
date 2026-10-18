@@ -41,7 +41,8 @@ export default function MfaChallenge() {
       await verifyTotpSignIn(code);
       setLocation('/dashboard');
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'That code could not be verified. Check the current code and try again.');
+      setCode('');
+      setError(cause instanceof Error ? cause.message : 'Invalid or expired code. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -64,7 +65,7 @@ export default function MfaChallenge() {
       copy="Use the current code from your authenticator app to finish signing in."
     >
       <div className="verify-icon"><ShieldCheck size={25} /></div>
-      <h1 className="auth-title">Enter your authenticator code.</h1>
+      <h1 className="auth-title">Enter your verification code.</h1>
       <p className="auth-subtitle">
         {email ? <>Enter the current six-digit code for <strong>{email}</strong>.</> : 'Enter the current six-digit code from Google Authenticator.'}
       </p>
@@ -91,7 +92,7 @@ export default function MfaChallenge() {
           </div>
           {error && <div className="form-alert" role="alert" data-testid="status-totp-signin-error">{error}</div>}
           <button className="button auth-submit" type="submit" disabled={submitting}>
-            {submitting ? <><LoaderCircle size={16} className="animate-spin" /> Verifying…</> : 'Verify and continue'}
+            {submitting ? <><LoaderCircle size={16} className="animate-spin" /> Verifying…</> : 'Verify Code'}
           </button>
         </form>
       )}

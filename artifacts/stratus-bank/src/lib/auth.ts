@@ -146,7 +146,18 @@ export async function beginTotpEnrollment(): Promise<TotpEnrollment> {
     throw new Error('This account already has an authenticator. Enter its current code to continue.');
   }
 
-  const { data, error } = await getClient().auth.mfa.enroll({
+  const supabase = getClient();
+  const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors();
+  if (factorsError) throw factorsError;
+  const existingTotp = factors.all.find(factor => factor.factor_type === 'totp');
+  if (existingTotp?.status === 'verified') {
+    throw new Error('This account already has a verified authenticator. Return to sign-in and enter its current code.');
+  }
+  if (existingTotp) {
+    throw new Error('Authenticator setup is already pending for this account. No new factor was created. Contact support to complete or remove the pending setup.');
+  }
+
+  const { data, error } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
     friendlyName: 'Stratus Bank authenticator',
   });
@@ -168,7 +179,15 @@ async function challengeAndVerifyTotp(factorId: string, code: string) {
     challengeId: challenge.id,
     code,
   });
-  if (verifyError) throw verifyError;
+  if (verifyError) {
+    const status = 'status' in verifyError
+      ? (verifyError as typeof verifyError & { status?: number }).status
+      : undefined;
+    if (status === 400 || status === 401 || status === 403 || status === 404 || status === 422) {
+      throw new Error('Invalid or expired code. Please try again.');
+    }
+    throw verifyError;
+  }
 
   const state = await getMfaAccessState();
   if (state.status !== 'authenticated') {

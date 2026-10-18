@@ -1,0 +1,1 @@
+- [Supabase TOTP enrollment guard](supabase-totp-enrollment.md) — route existing factors to verification; require explicit setup and check all factor statuses before enrollment.
