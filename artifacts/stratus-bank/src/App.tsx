@@ -17,7 +17,7 @@ import VerifyEmail from '@/pages/VerifyEmail';
 import MfaSetup from '@/pages/MfaSetup';
 import MfaChallenge from '@/pages/MfaChallenge';
 import BankingShell from '@/components/BankingShell';
-import { AccountsPage, DashboardPage, DepositPage, ProfilePage, TransactionsPage, TransferPage, UnavailablePage } from '@/pages/BankingPages';
+import { AccountsPage, DashboardPage, DepositPage, ProfilePage, TransactionsPage, TransferPage, UnavailablePage, BeneficiariesPage } from '@/pages/BankingPages';
 
 const queryClient = new QueryClient();
 
@@ -41,7 +41,7 @@ function Router() {
         <Route path="/transactions"><BankingShell><TransactionsPage /></BankingShell></Route>
         <Route path="/statements"><BankingShell><UnavailablePage section="Statements" /></BankingShell></Route>
         <Route path="/cards"><BankingShell><UnavailablePage section="Cards" /></BankingShell></Route>
-        <Route path="/beneficiaries"><BankingShell><UnavailablePage section="Beneficiaries" /></BankingShell></Route>
+        <Route path="/beneficiaries"><BankingShell><BeneficiariesPage /></BankingShell></Route>
         <Route path="/security"><BankingShell><UnavailablePage section="Security" /></BankingShell></Route>
         <Route path="/support"><BankingShell><UnavailablePage section="Support" /></BankingShell></Route>
         <Route path="/profile"><BankingShell><ProfilePage /></BankingShell></Route>
