@@ -18,35 +18,83 @@ export const account = {
 };
 
 export const openingBalance = 22500000;
+export const illustrativeCreditTotal = 8118147;
+export const illustrativeClosingBalance = 30618147;
 
-const creditDefinitions = [
-  ['Summit Energy Group', 'Investment Payment', 'ST-842691'],
-  ['Meridian Property Holdings', 'Real Estate Investment', 'MD-317408'],
-  ['Northstar Capital Partners', 'Investment Return', 'NC-590273'],
-  ['Evergreen Commercial Group', 'Contract Proceeds', 'EG-461825'],
-  ['Sterling Infrastructure', 'Project Payment', 'SI-208614'],
-  ['Horizon Asset Management', 'Investment Distribution', 'HA-735190'],
-  ['Crestview Development', 'Property Proceeds', 'CV-914362'],
-  ['Bluehaven Ventures', 'Investment Payment', 'BV-683051'],
-] as const;
-
-const creditAmounts = [1500000, 1250000, 1100000, 1000000, 900000, 850000, 750000, 768147];
-const ageInDays = [3, 11, 22, 34, 46, 59, 74, 88];
-
-export const credits: CreditRecord[] = creditDefinitions.map((definition, index) => {
-  const date = new Date();
-  date.setDate(date.getDate() - ageInDays[index]);
-  date.setHours([9, 11, 14, 10, 15, 12, 16, 13][index], [18, 42, 7, 26, 51, 13, 38, 4][index], 0, 0);
-  return {
-    id: `credit-${index + 1}`,
-    counterparty: definition[0],
-    description: definition[1],
-    reference: definition[2],
-    date,
-    amount: creditAmounts[index],
+export const credits: CreditRecord[] = [
+  {
+    id: 'credit-1',
+    counterparty: 'Summit Energy Group',
+    description: 'Investment Payment',
+    reference: 'ST-842691',
+    date: new Date('2026-02-05T00:00:00'),
+    amount: 1500000,
     status: 'Completed',
-  };
-});
+  },
+  {
+    id: 'credit-2',
+    counterparty: 'Meridian Property Holdings',
+    description: 'Real Estate Investment',
+    reference: 'MD-317408',
+    date: new Date('2025-04-26T00:00:00'),
+    amount: 1250000,
+    status: 'Completed',
+  },
+  {
+    id: 'credit-3',
+    counterparty: 'Northstar Capital Partners',
+    description: 'Investment Return',
+    reference: 'NC-590273',
+    date: new Date('2025-04-23T00:00:00'),
+    amount: 1100000,
+    status: 'Completed',
+  },
+  {
+    id: 'credit-4',
+    counterparty: 'Evergreen Commercial Group',
+    description: 'Contract Proceeds',
+    reference: 'EG-461825',
+    date: new Date('2024-06-20T00:00:00'),
+    amount: 1000000,
+    status: 'Completed',
+  },
+  {
+    id: 'credit-5',
+    counterparty: 'Sterling Infrastructure',
+    description: 'Project Payment',
+    reference: 'SI-208614',
+    date: new Date('2024-01-04T00:00:00'),
+    amount: 900000,
+    status: 'Completed',
+  },
+  {
+    id: 'credit-6',
+    counterparty: 'Horizon Asset Management',
+    description: 'Investment Distribution',
+    reference: 'HA-735190',
+    date: new Date('2023-05-12T00:00:00'),
+    amount: 850000,
+    status: 'Completed',
+  },
+  {
+    id: 'credit-7',
+    counterparty: 'Crestview Development',
+    description: 'Property Proceeds',
+    reference: 'CV-914362',
+    date: new Date('2023-03-22T00:00:00'),
+    amount: 750000,
+    status: 'Completed',
+  },
+  {
+    id: 'credit-8',
+    counterparty: 'Bluehaven Ventures',
+    description: 'Investment Payment',
+    reference: 'BV-683051',
+    date: new Date('2021-05-10T00:00:00'),
+    amount: 768147,
+    status: 'Completed',
+  },
+];
 
 export const formatMoney = (amount: number) =>
   new Intl.NumberFormat('en-US', {
@@ -57,4 +105,8 @@ export const formatMoney = (amount: number) =>
   }).format(amount);
 
 export const formatRecordDate = (date: Date) =>
-  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).format(date);
+  new Intl.DateTimeFormat('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  }).format(date);
