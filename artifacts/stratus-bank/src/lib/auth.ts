@@ -169,6 +169,25 @@ export async function beginTotpEnrollment(): Promise<TotpEnrollment> {
   };
 }
 
+export async function getPendingTotpFactorId(): Promise<string | null> {
+  const { data, error } = await getClient().auth.mfa.listFactors();
+  if (error) throw error;
+  return data.all.find(factor => factor.factor_type === 'totp' && factor.status === 'unverified')?.id ?? null;
+}
+
+export async function removePendingTotpFactor(factorId: string) {
+  const supabase = getClient();
+  const { data, error } = await supabase.auth.mfa.listFactors();
+  if (error) throw error;
+  const factor = data.all.find(item => item.id === factorId);
+  if (!factor || factor.factor_type !== 'totp' || factor.status !== 'unverified') {
+    throw new Error('Only an unfinished authenticator setup can be removed here. Verified authenticators are protected.');
+  }
+
+  const { error: removeError } = await supabase.auth.mfa.unenroll({ factorId });
+  if (removeError) throw removeError;
+}
+
 async function challengeAndVerifyTotp(factorId: string, code: string) {
   const supabase = getClient();
   const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });

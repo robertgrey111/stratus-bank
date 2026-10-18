@@ -5,6 +5,8 @@ import AuthLayout from '../components/AuthLayout';
 import {
   beginTotpEnrollment,
   getMfaAccessState,
+  getPendingTotpFactorId,
+  removePendingTotpFactor,
   signOut,
   verifyTotpEnrollment,
   type TotpEnrollment,
@@ -13,11 +15,14 @@ import {
 export default function MfaSetup() {
   const [, setLocation] = useLocation();
   const [enrollment, setEnrollment] = useState<TotpEnrollment | null>(null);
+  const [pendingFactorId, setPendingFactorId] = useState<string | null>(null);
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -37,6 +42,8 @@ export default function MfaSetup() {
           setLocation('/mfa-challenge');
           return;
         }
+        const pendingId = await getPendingTotpFactorId();
+        if (active) setPendingFactorId(pendingId);
       } catch (cause) {
         if (active) setError(cause instanceof Error ? cause.message : 'We could not start authenticator setup. Please try again.');
       } finally {
@@ -49,14 +56,40 @@ export default function MfaSetup() {
 
   async function startSetup() {
     setError('');
+    setNotice('');
     setStarting(true);
     try {
       const setup = await beginTotpEnrollment();
       setEnrollment(setup);
     } catch (cause) {
+      try {
+        const pendingId = await getPendingTotpFactorId();
+        if (pendingId) {
+          setPendingFactorId(pendingId);
+          return;
+        }
+      } catch {
+        // Preserve the original enrollment error if the follow-up factor check also fails.
+      }
       setError(cause instanceof Error ? cause.message : 'We could not start authenticator setup. Please try again.');
     } finally {
       setStarting(false);
+    }
+  }
+
+  async function removePendingSetup() {
+    if (!pendingFactorId) return;
+    setError('');
+    setNotice('');
+    setRemoving(true);
+    try {
+      await removePendingTotpFactor(pendingFactorId);
+      setPendingFactorId(null);
+      setNotice('Pending authenticator setup removed. You can now start a fresh setup.');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'We could not remove the pending setup. Please try again.');
+    } finally {
+      setRemoving(false);
     }
   }
 
@@ -93,18 +126,34 @@ export default function MfaSetup() {
     <AuthLayout
       eyebrow="Secure your account"
       title="One more layer of protection."
-      copy="Connect an authenticator app once. After that, use its current six-digit code whenever you sign in."
+      copy={pendingFactorId
+        ? 'Your previous authenticator setup is unfinished. Remove it to discard its old QR code, then start again.'
+        : 'Connect an authenticator app once. After that, use its current six-digit code whenever you sign in.'}
     >
       <div className="verify-icon"><ShieldCheck size={25} /></div>
       <h1 className="auth-title">Set up your authenticator.</h1>
-      <p className="auth-subtitle">Scan this QR code with Google Authenticator on your iPhone, then confirm with the six-digit code it generates.</p>
+      <p className="auth-subtitle">
+        {pendingFactorId
+          ? 'A pending setup has no usable verification code. Remove it below, then scan a new QR code with Google Authenticator.'
+          : 'Scan this QR code with Google Authenticator on your iPhone, then confirm with the six-digit code it generates.'}
+      </p>
 
       {loading && (
         <div className="mfa-loading" role="status">
           <LoaderCircle size={18} className="animate-spin" /> Checking your account…
         </div>
       )}
-      {!loading && !enrollment && !error && (
+      {!loading && pendingFactorId && !enrollment && (
+        <>
+          <div className="form-alert" role="status">
+            An authenticator setup is pending. Removing it will invalidate its old QR code; it will not remove a verified authenticator.
+          </div>
+          <button className="button auth-submit" type="button" onClick={removePendingSetup} disabled={removing}>
+            {removing ? <><LoaderCircle size={16} className="animate-spin" /> Removing pending setup…</> : 'Remove pending setup'}
+          </button>
+        </>
+      )}
+      {!loading && !pendingFactorId && !enrollment && !error && (
         <button className="button auth-submit" type="button" onClick={startSetup} disabled={starting}>
           {starting ? <><LoaderCircle size={16} className="animate-spin" /> Preparing setup…</> : 'Set up authenticator'}
         </button>
@@ -149,6 +198,7 @@ export default function MfaSetup() {
           </form>
         </>
       )}
+      {notice && <div className="form-success" role="status">{notice}</div>}
       {!loading && !enrollment && error && (
         <div className="form-alert" role="alert" data-testid="status-totp-setup-error">{error}</div>
       )}
