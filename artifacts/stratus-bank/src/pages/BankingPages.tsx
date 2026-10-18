@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useSubmitTransfer, type TransferAttempt } from '@workspace/api-client-react';
 import { ArrowDownLeft, ArrowRight, BadgeCheck, CircleHelp, Clock3, Eye, EyeOff, Search, Send, ShieldCheck, Wallet } from 'lucide-react';
 import { Link } from 'wouter';
-import { account, credits, formatMoney, formatRecordDate, openingBalance, illustrativeCreditTotal, illustrativeClosingBalance, type CreditRecord } from '../lib/banking-data';
+import { account, credits, formatMoney, formatRecordDate, openingBalance, type CreditRecord } from '../lib/banking-data';
 
 function PageHeading({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return (
@@ -96,9 +96,8 @@ function BalanceFlow() {
   const [range, setRange] = useState(90);
   const filtered = credits.filter(record => range === 0 || (Date.now() - record.date.getTime()) / 86400000 <= range);
 
-  const { plot, balances, labels } = useMemo(() => {
+  const { points, balances, labels } = useMemo(() => {
     const points = filtered.slice().sort((a, b) => a.date.getTime() - b.date.getTime());
-    // compute cumulative balances starting from openingBalance
     const balances: number[] = [];
     let running = openingBalance;
     for (const p of points) {
@@ -106,13 +105,14 @@ function BalanceFlow() {
       balances.push(running);
     }
     const labels = points.map(p => formatRecordDate(p.date));
-    return { plot: points, balances, labels };
+    return { points, balances, labels };
   }, [filtered]);
 
   const total = filtered.reduce((sum, record) => sum + record.amount, 0);
   const rangeOptions = [{ label: '7 days', days: 7 }, { label: '30 days', days: 30 }, { label: '90 days', days: 90 }, { label: 'All Time', days: 0 }];
 
-  // chart rendering: show cumulative balances as a line/area
+  const closing = balances.length ? balances[balances.length - 1] : openingBalance + total;
+
   const chart = useMemo(() => {
     if (!balances.length) return null;
     const width = 620;
@@ -135,7 +135,7 @@ function BalanceFlow() {
       <div className="bank-chart-head">
         <div>
           <h2 id="balance-flow-heading">Balance Flow</h2>
-          <p>Illustrative balance history — opening {formatMoney(openingBalance)} · credits {formatMoney(total)} · closing {formatMoney(balances[b alances.length-1] ?? illustrativeClosingBalance)}</p>
+          <p>Illustrative balance history — opening {formatMoney(openingBalance)} · credits {formatMoney(total)} · closing {formatMoney(closing)}</p>
         </div>
         <div className="bank-range" aria-label="Balance flow date range">
           {rangeOptions.map(option => (
@@ -277,7 +277,7 @@ export function TransactionsPage() {
 type DepositFields = { amount: string; method: string; reference: string };
 const emptyDeposit: DepositFields = { amount: '', method: 'Bank transfer', reference: '' };
 export function DepositPage() {
-  const [fields, setFields] = useState<DepositFields>(emptyDeposit);
+  const [fields, setFields] = useState(emptyDeposit);
   const [stage, setStage] = useState<'form' | 'review' | 'complete'>('form');
   function update(key: keyof DepositFields, value: string) { setFields(current => ({ ...current, [key]: value })); }
   if (stage === 'complete') return (
@@ -385,7 +385,7 @@ const unavailableCopy: Record<string, { title: string; description: string; eyeb
   Statements: { title: 'Statements', description: 'Statement access is not available in this prototype. No statement files are connected.', eyebrow: 'Coming soon' },
   Cards: { title: 'Cards', description: 'Card controls are not connected in this prototype. No active or virtual cards are represented here.', eyebrow: 'Coming soon' },
   Beneficiaries: { title: 'Beneficiaries', description: 'Beneficiary management is not available in this prototype. No recipients have been saved.', eyebrow: 'Coming soon' },
-  Security: { title: 'Security', description: 'Your sign-in remains protected by the existing authenticator verification. Additional account security controls are unavailable here.', eyebrow: 'Account security' },
+  Security: { title: 'Security', description: 'Your sign-in remains protected by the existing authenticator verification. Additional account security controls are unavailable here.', eyebrow: 'Account protection' },
   Support: { title: 'Support', description: 'Support messaging is not connected in this prototype. You can still return to your account overview or review activity.', eyebrow: 'Help center' },
 };
 export function UnavailablePage({ section }: { section: keyof typeof unavailableCopy }) {
@@ -394,8 +394,8 @@ export function UnavailablePage({ section }: { section: keyof typeof unavailable
   return (
     <>
       <PageHeading eyebrow={content.eyebrow} title={content.title} subtitle={content.description} />
-      <section className="bank-panel bank-coming"><span className="bank-party-mark"><CircleHelp size={20} /></span><h2>{unavailableHeading}</h2><p>This is an honest prototype state. No records, connections, or controls are active for this feature.</p>
-        <div className="bank-coming-links"><Link href="/dashboard" className="bank-text-link" data-testid="link-unavailable-dashboard">Back to overview <ArrowRight size={14} /></Link></div>
+      <section className="bank-panel bank-coming"><span className="bank-party-mark"><CircleHelp size={20} /></span><h2>{unavailableHeading}</h2><p>This is an honest prototype state. No records, controls, or account actions are being simulated on this page.</p>
+        <div className="bank-coming-links"><Link href="/dashboard" className="bank-text-link" data-testid="link-unavailable-dashboard">Back to overview <ArrowRight size={14}</ArrowRight></Link><Link href="/transactions" className="bank-text-link" data-testid="link-unavailable-transactions">Review credits <ArrowRight size={14} /></Link><Link href="/accounts" className="bank-text-link" data-testid="link-unavailable-accounts">Account details <ArrowRight size={14} /></Link></div>
       </section>
     </>
   );
