@@ -1,0 +1,66 @@
+Please improve the existing Stratus Bank website according to the requirements below. Work on the current project and preserve all features that are already working. Do not rebuild the application from scratch.
+
+1. Account Overview — Checking and Savings
+
+Split the existing combined available balance of $30,618,147.00 into two separate accounts:
+
+* Checking Account: $10,618,147.00
+* Savings Account: $20,000,000.00
+* Combined Available Balance: $30,618,147.00
+
+Ensure the checking and savings balances add up exactly to the combined available balance. Display both accounts clearly on the dashboard with professional banking-style account cards. Do not change the combined total.
+
+2. Cards Page
+
+Create a polished Cards page displaying two separate cards: one for Checking and one for Savings.
+
+* Display the cardholder name ROBERT GREY on both cards.
+* Never display the full card number. Use a hidden or masked number instead.
+* Add a freeze icon and freeze/unfreeze control to each card.
+* Both cards must initially appear frozen, with a clear lock icon and “Frozen” status.
+* Allow the freeze control to change the card’s displayed status within the website.
+* Do not imply that these interface controls freeze or control real payment cards.
+* Make the cards visually attractive and consistent with the existing Stratus Bank branding.
+
+3. Authenticator Verification Screen
+
+Change the visible wording from “Six-digit authenticator code” to the more professional banking-style label “Security Verification Code”.
+
+Change the heading and supporting text to something like:
+
+Heading: “Verify Your Identity”
+
+Supporting text: “Enter the six-digit security code from your authenticator app to securely access your account.”
+
+Change the submit button to “Verify and Continue”.
+
+Keep the existing six-digit Google Authenticator verification mechanism working exactly as it does now. This is a wording and interface change only. Do not replace the authenticator system, disable MFA, change Supabase authentication, or modify existing secrets.
+
+4. Remove Repeated Demo and Prototype Wording
+
+Remove unnecessary repeated uses of the words “demo” and “prototype” from page headings, descriptions, cards, and footers. Use professional, natural banking-style language throughout the website.
+
+Do not represent fictional account balances, cards, or transaction records as verified real banking records. If a disclosure is necessary, use one concise, unobtrusive site-wide statement that this is a fictional banking interface and does not provide real banking services. Do not repeat warnings on every page.
+
+5. Transaction History and Balance Flow
+
+* Keep the page title “Transaction History”.
+* Preserve the existing eight credit records, their amounts, beneficiaries or senders, and dates.
+* Ensure the “All Time” balance-flow view displays the existing history and a visible cumulative balance chart.
+* Make the 7-day, 30-day, and 90-day filters work correctly according to transaction dates.
+* Do not invent additional transactions or change the existing records to force the chart to display data.
+* Keep the combined balance consistent wherever it appears.
+
+6. Preserve Existing Functionality
+
+* Keep the current sign-in, email/password authentication, Google Authenticator verification, and Supabase session handling working.
+* Do not change the Supabase project, environment secrets, or authentication configuration.
+* Keep Robert Grey as the account owner and Rachel Rebecca Grey as the named beneficiary.
+* Do not implement real deposits, transfers, withdrawals, or payment processing.
+* Preserve this exact transfer restriction message: “Withdrawals and transfers are suspended pending probate authorization”.
+
+7. Final Checks
+
+After making the changes, run the relevant TypeScript checks and build commands. Fix any errors caused by your changes. Test the sign-in and authenticator flow, dashboard balances, transaction history, balance-flow chart, Cards page, and navigation.
+
+Do not claim the work is complete unless the checks have been run and the affected pages have been reviewed. Report what was changed, which checks passed, and any remaining issues.
