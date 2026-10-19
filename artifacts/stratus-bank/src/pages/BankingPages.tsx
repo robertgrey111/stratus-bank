@@ -395,7 +395,7 @@ export function UnavailablePage({ section }: { section: keyof typeof unavailable
     <>
       <PageHeading eyebrow={content.eyebrow} title={content.title} subtitle={content.description} />
       <section className="bank-panel bank-coming"><span className="bank-party-mark"><CircleHelp size={20} /></span><h2>{unavailableHeading}</h2><p>This is an honest prototype state. No records, controls, or account actions are being simulated on this page.</p>
-        <div className="bank-coming-links"><Link href="/dashboard" className="bank-text-link" data-testid="link-unavailable-dashboard">Back to overview <ArrowRight size={14}</ArrowRight></Link><Link href="/transactions" className="bank-text-link" data-testid="link-unavailable-transactions">Review credits <ArrowRight size={14} /></Link><Link href="/accounts" className="bank-text-link" data-testid="link-unavailable-accounts">Account details <ArrowRight size={14} /></Link></div>
+        <div className="bank-coming-links"><Link href="/dashboard" className="bank-text-link" data-testid="link-unavailable-dashboard">Back to overview <ArrowRight size={14} /></Link><Link href="/transactions" className="bank-text-link" data-testid="link-unavailable-transactions">Review credits <ArrowRight size={14} /></Link><Link href="/accounts" className="bank-text-link" data-testid="link-unavailable-accounts">Account details <ArrowRight size={14} /></Link></div>
       </section>
     </>
   );
