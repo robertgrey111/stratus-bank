@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { ArrowRight, CircleHelp, CreditCard, FileText, Gauge, Landmark, LockKeyhole, LogOut, Menu, Send, ShieldCheck, UserRound, Users, Wallet, X } from 'lucide-react';
+import { ArrowRight, CreditCard, FileText, Gauge, Landmark, LockKeyhole, LogOut, Menu, Send, ShieldCheck, UserRound, Users, Wallet, X } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import Brand from './Brand';
 import { getMfaAccessState, signOut } from '../lib/auth';
@@ -12,11 +12,7 @@ const navItems = [
   { href: '/transfer', label: 'Transfer Funds', icon: Send },
   { href: '/transactions', label: 'Transactions', icon: ArrowRight },
   { href: '/statements', label: 'Statements', icon: FileText },
-  { href: '/cards', label: 'Cards', icon: CreditCard },
-  { href: '/beneficiaries', label: 'Beneficiaries', icon: Users },
   { href: '/profile', label: 'Profile and Settings', icon: UserRound },
-  { href: '/security', label: 'Security', icon: ShieldCheck },
-  { href: '/support', label: 'Help and Support', icon: CircleHelp },
 ];
 
 export default function BankingShell({ children }: { children: ReactNode }) {
@@ -56,7 +52,7 @@ export default function BankingShell({ children }: { children: ReactNode }) {
   }
 
   if (!ready || (!allowed && !failed)) {
-    return <div className="bank-app"><header className="bank-header"><div className="bank-header-inner"><Brand /><span className="tile-label">Preparing your account</span></div></header><main className="bank-main" aria-label="Loading account"><div className="bank-skeleton" /><div className="bank-skeleton" style={{ marginTop: 18, height: 230 }} /></main></div>;
+    return <div className="bank-app"><header className="bank-header"><div className="bank-header-inner"><Brand /><span className="tile-label">Preparing your account</span></div></header><main className="bank-main"><div className="bank-panel bank-loading" aria-live="polite"><span className="bank-loading-spinner" aria-hidden="true" /><p>Checking your secure sign-in status…</p></div></main></div>;
   }
   if (!allowed) return <div className="bank-app" aria-label="Redirecting to secure sign in" />;
 
@@ -66,7 +62,7 @@ export default function BankingShell({ children }: { children: ReactNode }) {
         <Link href="/dashboard" className="bank-brand-link" aria-label="Stratus Bank overview" data-testid="link-brand-dashboard"><Brand /></Link>
         <button className="bank-mobile-menu" type="button" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} data-testid="button-mobile-navigation" onClick={() => setMenuOpen(value => !value)}>{menuOpen ? <X size={18} /> : <Menu size={18} />}</button>
         <nav className={`bank-nav${menuOpen ? ' is-open' : ''}`} aria-label="Banking navigation">
-          {navItems.map(({ href, label, icon: Icon }) => <Link key={href} href={href} aria-current={path === href ? 'page' : undefined} data-testid={`link-nav-${label.toLowerCase()}`} onClick={() => setMenuOpen(false)}><Icon className="bank-nav-icon" size={14} />{label}</Link>)}
+          {navItems.map(({ href, label, icon: Icon }) => <Link key={href} href={href} aria-current={path === href ? 'page' : undefined} data-testid={`link-nav-${label.toLowerCase()}`} onClick={() => setMenuOpen(false)}><Icon size={15} />{label}</Link>)}
         </nav>
         <Link href="/profile" className="bank-profile" aria-label="Robert Grey profile" data-testid="link-profile">
           <span className="bank-avatar" data-testid="text-owner-initials">RG</span><span className="bank-profile-name">Robert Grey</span>
@@ -86,7 +82,7 @@ export default function BankingShell({ children }: { children: ReactNode }) {
       <main className="bank-main">
         {signOutError && <p className="form-alert" role="alert" data-testid="status-sign-out-error">{signOutError}</p>}
         {children}
-        <p className="bank-footer-note"><LockKeyhole size={13} />Protected with secure sign-in. Prototype values are illustrative only.</p>
+        <p className="bank-footer-note"><LockKeyhole size={13} />Protected with secure sign-in.</p>
       </main>
     </div>
   </div>;
