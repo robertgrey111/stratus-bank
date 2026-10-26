@@ -238,12 +238,31 @@ export async function verifyTotpSignIn(code: string) {
   await challengeAndVerifyTotp(factor.id, code);
 }
 
-export function getPendingEmail() {
-  return sessionStorage.getItem(pendingEmailKey) || '';
-}
 
 export async function signOut() {
   const { error } = await getClient().auth.signOut();
   if (error) throw error;
+
   sessionStorage.removeItem(pendingEmailKey);
+}
+
+export async function requestEmailChange(newEmail: string) {
+  const email = newEmail.trim().toLowerCase();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error('Enter a valid email address.');
+  }
+
+  const supabase = getClient();
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+
+  if (sessionError) throw sessionError;
+  if (!sessionData.session) {
+    throw new Error('Please sign in before changing your email.');
+  }
+
+  const { error } = await supabase.auth.updateUser({ email });
+
+  if (error) throw error;
 }
