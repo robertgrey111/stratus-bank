@@ -1,6 +1,9 @@
 import { createClient, type Session, type User } from '@supabase/supabase-js';
 
-const pendingEmailKey = 'stratus.auth.pendingEmail';
+const pendingEmailKey  = 'stratus.auth.pendingEmail';
+export function getPendingEmail(): string {
+  return sessionStorage.getItem(pendingEmailKey) ?? '';
+}
 let client: ReturnType<typeof createClient> | null = null;
 
 export type StratusUser = {
