@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type SubmitEvent, type KeyboardEvent } from 'react';
 import { ArrowRight, LoaderCircle, MailCheck } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import AuthLayout from '../components/AuthLayout';
@@ -32,7 +32,7 @@ export default function VerifyEmail() {
     if (event.key === 'ArrowLeft' && index > 0) inputs.current[index - 1]?.focus();
     if (event.key === 'ArrowRight' && index < 5) inputs.current[index + 1]?.focus();
   }
-  async function submit(event: FormEvent<HTMLFormElement>) {
+   async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault(); setError(''); setSuccess('');
     if (!email) { setError('Your verification email is missing. Please return to account creation and try again.'); return; }
     const token = digits.join('');
