@@ -167,16 +167,16 @@ export function DepositPage() {
   </>;
 }
 
-type TransferFields = { recipientName: string; accountIdentifier: string; Fiinstitution: string; amount: string; transferType: TransferAttempt['transferType']; reference: string };
+type TransferFields = { recipientName: string; accountIdentifier: string; institution: string; amount: string; transferType: TransferAttempt['transferType']; reference: string };
 const emptyTransfer: TransferFields = { recipientName: '', accountIdentifier: '', institution: '', amount: '', transferType: 'domestic', reference: '' };
 export function TransferPage() {
   const [fields, setFields] = useState<TransferFields>(emptyTransfer);
   const [stage, setStage] = useState<'form' | 'review' | 'rejected'>('form');
   const submitTransfer = useSubmitTransfer();
-  const exactRestriction = 'Withdrawals and transfers remain suspended pending  authorization from the court.';
+  const exactRestriction = 'Withdrawals and transfers remain suspended pending authorization from the court.';
   function update(key: keyof TransferFields, value: string) { setFields(current => ({ ...current, [key]: value })); }
   async function attemptTransfer() {
-    const transferAttempt: TransferAttempt = { ...fields, amount: Number(fields.amount) } as TransferAttempt;
+   const transferAttempt: TransferAttempt = { ...fields, amount: Number(fields.amount) } as TransferAttempt;
     try { await submitTransfer.mutateAsync({ data: transferAttempt }); }
     catch { /* The API is expected to reject this attempt with HTTP 403. */ }
     setStage('rejected');
