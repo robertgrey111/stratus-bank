@@ -89,7 +89,7 @@ export function DashboardPage() {
   const hour = now.getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   return <>
-    <PageHeading eyebrow="Account overview" title={`${greeting}, Robert Grey.`} subtitle="Here’s your account at a glance." />
+    <PageHeading eyebrow="Account overview" title={`${greeting}, ${account.ownerName}`} subtitle="Here’s your account at a glance." />
     <div className="bank-balance-layout">
       <section className="bank-panel bank-balance" aria-label="Checking account balance">
         <div className="bank-balance-top"><span>{account.accountType}</span><button className="bank-inline-button" type="button" onClick={() => setVisible(value => !value)} aria-label={visible ? 'Hide balance' : 'Show balance'}>{visible ? <EyeOff size={14} /> : <Eye size={14} />}</button></div>
@@ -153,7 +153,7 @@ export function DepositPage() {
   const [stage, setStage] = useState<'form' | 'review' | 'complete'>('form');
   function update(key: keyof DepositFields, value: string) { setFields(current => ({ ...current, [key]: value })); }
   if (stage === 'complete') return <>
-    <PageHeading eyebrow="Deposit" title="Deposit request" subtitle="Request complete." /><section className="bank-panel bank-complete" data-testid="status-deposit-prototype"><span className="bank-party-mark"><Check size={18} /></span><h2>Deposit complete</h2><p>Your deposit request has been added to the review queue.</p></section>
+    <PageHeading eyebrow="Deposit" title="Deposit request" subtitle="Request complete." /><section className="bank-panel bank-complete" data-testid="status-deposit-prototype"><span className="bank-party-mark"><Check size={18} /></span><h2>Deposit request recorded</h2><p>Your deposit request has been added to the review queue.</p></section>
   </>;
   return <>
     <PageHeading eyebrow="Deposit" title={stage === 'review' ? 'Review deposit details' : 'Deposit'} subtitle={stage === 'review' ? 'Check the entered information before continuing.' : 'Review details before continuing.'} />
@@ -167,7 +167,7 @@ export function DepositPage() {
   </>;
 }
 
-type TransferFields = { recipientName: string; accountIdentifier: string; institution: string; amount: string; transferType: TransferAttempt['transferType']; reference: string };
+type TransferFields = { recipientName: string; accountIdentifier: string; Fiinstitution: string; amount: string; transferType: TransferAttempt['transferType']; reference: string };
 const emptyTransfer: TransferFields = { recipientName: '', accountIdentifier: '', institution: '', amount: '', transferType: 'domestic', reference: '' };
 export function TransferPage() {
   const [fields, setFields] = useState<TransferFields>(emptyTransfer);

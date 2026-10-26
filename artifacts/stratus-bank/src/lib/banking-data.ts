@@ -9,7 +9,7 @@ export type CreditRecord = {
 };
 
 export const account = {
-  ownerName: 'MARK VERDIN',
+  ownerName: 'Mark Verdin',
   accountType: 'Checking Account',
   accountNumberEnding: '91180',
   availableBalance: 76900000,
