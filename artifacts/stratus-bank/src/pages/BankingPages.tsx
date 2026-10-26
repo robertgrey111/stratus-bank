@@ -212,14 +212,116 @@ export function UnavailablePage({ section }: { section: keyof typeof unavailable
   </>;
 }
 
+
 export function ProfilePage() {
+  const [newEmail, setNewEmail] = useState('markverdin7@gmail.com');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  async function submitEmailChange(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError('');
+    setMessage('');
+    setLoading(true);
+
+    try {
+      await requestEmailChange(newEmail);
+      setMessage(
+        'Email change requested. Check your email inboxes for any required confirmation.'
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Unable to request the email change. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return <>
-    <PageHeading eyebrow="Personal details" title="Profile" subtitle="The account owner shown throughout this build." />
+    <PageHeading
+      eyebrow="Personal details"
+      title="Profile"
+      subtitle="Manage your sign-in email and account security."
+    />
+
     <section className="bank-panel bank-account-detail">
-      <div className="bank-detail-row"><span>Account owner</span><strong data-testid="text-profile-name">{account.ownerName}</strong></div>
-      <div className="bank-detail-row"><span>Account</span><strong>{account.accountType} · •••• {account.accountNumberEnding}</strong></div>
-      <div className="bank-detail-row"><span>Sign-in protection</span><strong><ShieldCheck size={13} style={{ verticalAlign: '-2px', marginRight: 5 }} />Authenticator verification</strong></div>
+      <div className="bank-detail-row">
+        <span>Account owner</span>
+        <strong data-testid="text-profile-name">{account.ownerName}</strong>
+      </div>
+      <div className="bank-detail-row">
+        <span>Account</span>
+        <strong>{account.accountType} · •••• {account.accountNumberEnding}</strong>
+      </div>
+      <div className="bank-detail-row">
+        <span>Sign-in protection</span>
+        <strong>
+          <ShieldCheck
+            size={13}
+            style={{ verticalAlign: '-2px', marginRight: 5 }}
+          />
+          Authenticator verification
+        </strong>
+      </div>
     </section>
-    <div className="bank-coming-links"><Link href="/dashboard" className="bank-btn bank-btn-secondary" data-testid="link-profile-overview">Back to overview</Link></div>
+
+    <section className="bank-panel bank-form-card bank-section">
+      <h2>Change Sign-in Email</h2>
+      <p className="bank-subtitle">
+        Your existing password and authenticator setup will remain unchanged.
+      </p>
+
+      <form onSubmit={submitEmailChange} data-testid="form-change-email">
+        <div className="bank-form-field">
+          <label htmlFor="profile-new-email">New email address</label>
+          <input
+            id="profile-new-email"
+            className="bank-input"
+            type="email"
+            autoComplete="email"
+            required
+            value={newEmail}
+            onChange={event => setNewEmail(event.target.value)}
+          />
+        </div>
+
+        {error && (
+          <div className="bank-inline-alert" role="alert">
+            {error}
+          </div>
+        )}
+
+        {message && (
+          <div className="bank-inline-alert" role="status">
+            {message}
+          </div>
+        )}
+
+        <div className="bank-form-actions">
+          <button
+            className="bank-btn bank-btn-primary"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? 'Requesting…' : 'Request Email Change'}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div className="bank-coming-links">
+      <Link
+        href="/dashboard"
+        className="bank-btn bank-btn-secondary"
+        data-testid="link-profile-overview"
+      >
+        Back to overview
+      </Link>
+    </div>
   </>;
 }
+
