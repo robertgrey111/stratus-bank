@@ -46,7 +46,7 @@ function CreditsList({ records }: { records: CreditRecord[] }) {
 }
 
 function BalanceFlow() {
-  const [range, setRange] = useState(90);
+  const [range, setRange] = useState(0);
   const filtered = credits.filter(record => range === 0 || (Date.now() - record.date.getTime()) / 86400000 <= range);
   const plot = useMemo(() => {
     const points = filtered.slice().sort((a, b) => a.date.getTime() - b.date.getTime());
