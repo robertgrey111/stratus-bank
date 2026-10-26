@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useSubmitTransfer, type TransferAttempt } from '@workspace/api-client-react';
 import { ArrowDownLeft, ArrowRight, BadgeCheck, Check, ChevronRight, CircleHelp, Clock3, Eye, EyeOff, Search, Send, ShieldCheck, Wallet } from 'lucide-react';
 import { Link } from 'wouter';
 import { account, credits, formatMoney, formatRecordDate, openingBalance, type CreditRecord } from '../lib/banking-data';
-
+import { requestEmailChange } from '../lib/auth';
 function PageHeading({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return <header className="bank-page-head"><div><p className="bank-kicker">{eyebrow}</p><h1>{title}</h1>{subtitle && <p className="bank-subtitle">{subtitle}</p>}</div></header>;
 }
