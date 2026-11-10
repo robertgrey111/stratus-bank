@@ -269,49 +269,7 @@ export function ProfilePage() {
       </div>
     </section>
 
-    <section className="bank-panel bank-form-card bank-section">
-      <h2>Change Sign-in Email</h2>
-      <p className="bank-subtitle">
-        Your existing password and authenticator setup will remain unchanged.
-      </p>
-
-      <form onSubmit={submitEmailChange} data-testid="form-change-email">
-        <div className="bank-form-field">
-          <label htmlFor="profile-new-email">New email address</label>
-          <input
-            id="profile-new-email"
-            className="bank-input"
-            type="email"
-            autoComplete="email"
-            required
-            value={newEmail}
-            onChange={event => setNewEmail(event.target.value)}
-          />
-        </div>
-
-        {error && (
-          <div className="bank-inline-alert" role="alert">
-            {error}
-          </div>
-        )}
-
-        {message && (
-          <div className="bank-inline-alert" role="status">
-            {message}
-          </div>
-        )}
-
-        <div className="bank-form-actions">
-          <button
-            className="bank-btn bank-btn-primary"
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? 'Requesting…' : 'Request Email Change'}
-          </button>
-        </div>
-      </form>
-    </section>
+    
 
     <div className="bank-coming-links">
       <Link
