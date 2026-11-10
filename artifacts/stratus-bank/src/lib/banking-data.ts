@@ -9,15 +9,15 @@ export type CreditRecord = {
 };
 
 export const account = {
-  ownerName: 'Mark Verdin',
+  ownerName: 'Robert Grey',
   accountType: 'Checking Account',
   accountNumberEnding: '91180',
-  availableBalance: 76900000,
-  ledgerBalance: 76900000,
+  availableBalance: 30618147,
+  ledgerBalance: 30618147,
   status: 'Secure',
 };
 
-export const openingBalance = 63981853;
+
 
 const creditDefinitions = [
   ['Westbridge Global Holdings', 'Corporate Investment Payment', 'WB-572814'],

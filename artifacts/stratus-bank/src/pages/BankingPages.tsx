@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useSubmitTransfer, type TransferAttempt } from '@workspace/api-client-react';
 import { ArrowDownLeft, ArrowRight, BadgeCheck, Check, ChevronRight, CircleHelp, Clock3, Eye, EyeOff, Search, Send, ShieldCheck, Wallet } from 'lucide-react';
 import { Link } from 'wouter';
-import { account, credits, formatMoney, formatRecordDate, openingBalance, type CreditRecord } from '../lib/banking-data';
+import { account, credits, formatMoney, formatRecordDate, type CreditRecord } from '../lib/banking-data';
 import { requestEmailChange } from '../lib/auth';
 function PageHeading({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return <header className="bank-page-head"><div><p className="bank-kicker">{eyebrow}</p><h1>{title}</h1>{subtitle && <p className="bank-subtitle">{subtitle}</p>}</div></header>;
@@ -106,7 +106,7 @@ export function DashboardPage() {
     </section>
     <BalanceFlow />
     <section className="bank-section bank-panel bank-account-detail" aria-label="Account details">
-      <div className="bank-detail-row"><span>Account owner</span><strong>{account.ownerName}</strong></div><div className="bank-detail-row"><span>Account type</span><strong>{account.accountType} · •••• {account.accountNumberEnding}</strong></div><div className="bank-detail-row"><span>Opening balance</span><strong>{formatMoney(openingBalance)}</strong></div>
+      <div className="bank-detail-row"><span>Account owner</span><strong>{account.ownerName}</strong></div><div className="bank-detail-row"><span>Account type</span><strong>{account.accountType} · •••• {account.accountNumberEnding}</strong></div>
     </section>
     {selected && <RecordDetails record={selected} close={() => setSelected(null)} />}
   </>;
@@ -214,7 +214,7 @@ export function UnavailablePage({ section }: { section: keyof typeof unavailable
 
 
 export function ProfilePage() {
-  const [newEmail, setNewEmail] = useState('markverdin7@gmail.com');
+  const [newEmail, setNewEmail] = useState('greyrobert397@gmail.com');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');

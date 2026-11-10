@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSubmitTransfer, type TransferAttempt } from '@workspace/api-client-react';
 import { ArrowDownLeft, ArrowRight, BadgeCheck, Check, ChevronRight, CircleHelp, Clock3, Eye, EyeOff, Search, Send, ShieldCheck, Wallet } from 'lucide-react';
 import { Link } from 'wouter';
-import { account, credits, formatMoney, formatRecordDate, openingBalance, type CreditRecord } from '../lib/banking-data';
+import { account, credits, formatMoney, formatRecordDate,  type CreditRecord } from '../lib/banking-data';
 
 function PageHeading({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return (
@@ -196,8 +196,8 @@ export function DashboardPage() {
       <section className="bank-section bank-panel bank-account-detail" aria-label="Account details">
         <div className="bank-detail-row"><span>Account owner</span><strong>{account.ownerName}</strong></div>
         <div className="bank-detail-row"><span>Account type</span><strong>{account.accountType} · •••• {account.accountNumberEnding}</strong></div>
-        <div className="bank-detail-row"><span>Opening balance</span><strong>{formatMoney(openingBalance)}</strong></div>
-      </section>
+        
+     </section>
       {selected && <RecordDetails record={selected} close={() => setSelected(null)} />}
     </>
   );

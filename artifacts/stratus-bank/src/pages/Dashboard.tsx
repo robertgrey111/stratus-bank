@@ -50,7 +50,7 @@ export default function Dashboard() {
       <div className="dash-heading"><div><h1>Good morning, {firstName}.</h1><p>Here’s your money, right where you need it.</p></div></div>
       <div className="dash-grid">
         <section className="balance-card" aria-label="Account balance">
-          <div className="balance-label">Account balance</div><div className="balance-amount">$8,610.58</div><div className="balance-meta">Your everyday account</div>
+          <div className="balance-label">Account balance</div><div className="balance-amount">$30,618,147.00</div><div className="balance-meta">Your everyday account</div>
           <div className="balance-foot"><span className="account-tag">•••• 4826</span><span className="secure-chip"><ShieldCheck size={13}/> Secure account</span></div>
         </section>
           <section className="quick-card"><h2 className="quick-title">Everything in its place.</h2><p style={{fontSize:13,lineHeight:1.7,color:'#78889a',margin:'0 0 22px'}}>Your Stratus account is ready. We’ll keep your everyday balance and recent activity easy to find, right here.</p><div className="secure-chip" style={{color:'#4b7b61'}}><ShieldCheck size={14}/> Authenticator verification enabled</div></section>
@@ -58,7 +58,7 @@ export default function Dashboard() {
       <section className="activity-card"><div className="activity-head"><h2 className="activity-title">Recent activity</h2><span className="activity-period">Most recent</span></div>
         {activity.map((item,index)=>{const Icon=item.icon;return <div className="activity-row" key={item.name} data-testid={`row-activity-${index}`}><div className="activity-left"><span className={`merchant-icon${item.kind==='income'?' income':''}`}><Icon size={17}/></span><span><span className="merchant-name">{item.name}</span><span className="merchant-date" style={{display:'block'}}>{item.date}</span></span></div><span className={`activity-amount${item.kind==='income'?' income':''}`}>{item.amount}</span></div>;})}
       </section>
-      <p className="available-balance" data-testid="text-available-balance">Available balance <strong>$8,426.58</strong> <span>· $184.00 pending</span></p>
+      <p className="available-balance" data-testid="text-available-balance">Available balance <strong>$30,618,147.00</strong></p>
       {signOutError && <p className="form-alert" role="alert" data-testid="status-sign-out-error">{signOutError}</p>}
       <p className="dash-notice"><LockKeyhole size={13}/> Your account is protected with secure sign-in.</p>
     </div>
