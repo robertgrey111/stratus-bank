@@ -45,29 +45,28 @@ const creditAmounts = [
   768147,
 ];
 
-const ageInDays = [3, 11, 22, 34, 46, 59, 74, 88, 95, 102];
+const fixedDates = [
+  new Date(2025, 0, 21, 13, 18), // Jan 21, 2025 at 1:18 PM
+  new Date(2025, 0, 15, 11, 42), // Jan 15, 2025 at 11:42 AM
+  new Date(2024, 7, 19, 14, 7),  // Aug 19, 2024 at 2:07 PM
+  new Date(2024, 4, 27, 10, 26), // May 27, 2024 at 10:26 AM
+  new Date(2024, 4, 7, 15, 51),  // May 7, 2024 at 3:51 PM
+  new Date(2024, 0, 12, 12, 13), // Jan 12, 2024 at 12:13 PM
+  new Date(2023, 9, 26, 16, 38), // Oct 26, 2023 at 4:38 PM
+  new Date(2023, 7, 14, 13, 4),  // Aug 14, 2023 at 1:04 PM
+  new Date(2023, 3, 19, 10, 20), // Apr 19, 2023 at 10:20 AM
+  new Date(2022, 11, 23, 14, 35), // Dec 23, 2022 at 2:35 PM
+];
 
-export const credits: CreditRecord[] = creditDefinitions.map((definition, index) => {
-  const date = new Date();
-  date.setDate(date.getDate() - ageInDays[index]);
-
-  date.setHours(
-    [9, 11, 14, 10, 15, 12, 16, 13, 10, 14][index],
-    [18, 42, 7, 26, 51, 13, 38, 4, 20, 35][index],
-    0,
-    0
-  );
-
-  return {
-    id: `credit-${index + 1}`,
-    counterparty: definition[0],
-    description: definition[1],
-    reference: definition[2],
-    date,
-    amount: creditAmounts[index],
-    status: 'Completed' as const,
-  };
-}).sort((a, b) => b.date.getTime() - a.date.getTime());
+export const credits: CreditRecord[] = creditDefinitions.map((definition, index) => ({
+  id: `credit-${index + 1}`,
+  counterparty: definition[0],
+  description: definition[1],
+  reference: definition[2],
+  date: fixedDates[index],
+  amount: creditAmounts[index],
+  status: 'Completed' as const,
+}));
 
 export const formatMoney = (amount: number) =>
   new Intl.NumberFormat('en-US', {

@@ -170,7 +170,16 @@ export function DashboardPage() {
           </div>
           <div className="bank-balance-content">
             <div className="bank-balance-note">Available balance</div>
-            <div className="bank-amount" data-testid="text-available-balance">{visible ? formatMoney(account.availableBalance) : '••••'}</div>
+            <div className="bank-amount" data-testid="text-available-balance">
+              {visible ? formatMoney(account.availableBalance) : '••••'}
+            </div>
+
+            <div className="bank-balance-note" style={{ marginTop: 16 }}>
+              Ledger balance
+            </div>
+            <div className="bank-amount" data-testid="text-ledger-balance">
+              {visible ? formatMoney(account.ledgerBalance) : '••••'}
+            </div>
           </div>
           <div className="bank-balance-bottom"><span>•••• {account.accountNumberEnding}</span><span className="bank-status-secure"><ShieldCheck size={14} />Secure account</span></div>
         </section>
